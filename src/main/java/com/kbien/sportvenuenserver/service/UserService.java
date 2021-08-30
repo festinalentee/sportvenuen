@@ -1,18 +1,24 @@
 package com.kbien.sportvenuenserver.service;
 
+import com.kbien.sportvenuenserver.entity.Account;
 import com.kbien.sportvenuenserver.entity.Role;
-import com.kbien.sportvenuenserver.entity.User;
-import com.kbien.sportvenuenserver.entity.UserDetails;
-import com.kbien.sportvenuenserver.request.RegisterRequest;
 
 import java.util.List;
 
 public interface UserService {
-    User getUserById(Long id);
-    UserDetails getUserDetailsById(Long id);
-    User saveUser(RegisterRequest registerRequest);
+    Account getUserById(Long id);
+
+    Account saveUser(Account account);
+
     Role saveRole(Role role);
+
     void addRoleToUser(String email, String roleName);
-    User getUser(String email);
-    List<User> getUsers();
+
+    Account getUser(String email);
+
+    Role getRole(String name);
+
+    List<Account> getUsers();
+
+    Account updateUser(Account account);
 }

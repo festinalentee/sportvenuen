@@ -6,14 +6,13 @@ import com.auth0.jwt.JWTVerifier;
 import com.auth0.jwt.algorithms.Algorithm;
 import com.auth0.jwt.interfaces.DecodedJWT;
 import com.fasterxml.jackson.databind.ObjectMapper;
+import com.kbien.sportvenuenserver.entity.Account;
 import com.kbien.sportvenuenserver.entity.Role;
-import com.kbien.sportvenuenserver.entity.User;
-import com.kbien.sportvenuenserver.entity.UserDetails;
-import com.kbien.sportvenuenserver.request.RegisterRequest;
 import com.kbien.sportvenuenserver.service.UserService;
 import lombok.Data;
 import lombok.RequiredArgsConstructor;
 import org.springframework.http.ResponseEntity;
+import org.springframework.security.core.context.SecurityContextHolder;
 import org.springframework.web.bind.annotation.*;
 import org.springframework.web.servlet.support.ServletUriComponentsBuilder;
 
@@ -35,34 +34,41 @@ public class UserController {
     private final UserService userService;
 
     @GetMapping("/user/{id}")
-    public ResponseEntity<User> getUserById(@PathVariable("id") Long id) {
+    public ResponseEntity<Account> getUserById(@PathVariable("id") Long id) {
         return ResponseEntity.ok(userService.getUserById(id));
     }
 
-    @GetMapping("/user/details/{id}")
-    public ResponseEntity<UserDetails> getUserDetailsById(@PathVariable("id") Long id) {
-        return ResponseEntity.ok(userService.getUserDetailsById(id));
-    }
-
     @GetMapping("/users")
-    public ResponseEntity<List<User>>getUsers() {
+    public ResponseEntity<List<Account>> getUsers() {
         return ResponseEntity.ok().body(userService.getUsers());
     }
 
-    @PostMapping(path = "/user/save", consumes = "application/json")
-    public ResponseEntity<User>saveUser(@RequestBody RegisterRequest registerRequest) {
+    @GetMapping("/user")
+    public ResponseEntity<Account> getUser() {
+        String email = (String) SecurityContextHolder.getContext().getAuthentication().getPrincipal();
+        return ResponseEntity.ok().body(userService.getUser(email));
+    }
+
+    @PostMapping(path = "/user/save")
+    public ResponseEntity<Account> saveUser(@RequestBody Account account) {
         URI uri = URI.create(ServletUriComponentsBuilder.fromCurrentContextPath().path("/api/user/save").toUriString());
-        return ResponseEntity.created(uri).body(userService.saveUser(registerRequest));
+        account.setRoles(Collections.singleton(userService.getRole("ROLE_MEMBER")));
+        return ResponseEntity.created(uri).body(userService.saveUser(account));
+    }
+
+    @PutMapping(path = "/user")
+    public ResponseEntity<Account> updateUser(@RequestBody Account account) {
+        return ResponseEntity.accepted().body(userService.updateUser(account));
     }
 
     @PostMapping("/role/save")
-    public ResponseEntity<Role>saveRole(@RequestBody Role role) {
+    public ResponseEntity<Role> saveRole(@RequestBody Role role) {
         URI uri = URI.create(ServletUriComponentsBuilder.fromCurrentContextPath().path("/api/role/save").toUriString());
         return ResponseEntity.created(uri).body(userService.saveRole(role));
     }
 
     @PostMapping("/role/add-to-user")
-    public ResponseEntity<?>addRoleToUser(@RequestBody RoleToUserForm form) {
+    public ResponseEntity<?> addRoleToUser(@RequestBody RoleToUserForm form) {
         userService.addRoleToUser(form.getEmail(), form.getRoleName());
         return ResponseEntity.ok().build();
     }
@@ -70,19 +76,19 @@ public class UserController {
     @GetMapping("/token/refresh")
     public void refreshToken(HttpServletRequest request, HttpServletResponse response) throws IOException {
         String authorizationHeader = request.getHeader(AUTHORIZATION);
-        if(authorizationHeader != null && authorizationHeader.startsWith("Bearer ")) {
+        if (authorizationHeader != null && authorizationHeader.startsWith("Bearer ")) {
             try {
                 String refresh_token = authorizationHeader.substring("Bearer ".length());
                 Algorithm algorithm = Algorithm.HMAC256("secret".getBytes());
                 JWTVerifier verifier = JWT.require(algorithm).build();
                 DecodedJWT decodedJWT = verifier.verify(refresh_token);
                 String email = decodedJWT.getSubject();
-                User user = userService.getUser(email);
+                Account account = userService.getUser(email);
                 String access_token = JWT.create()
-                        .withSubject(user.getEmail())
+                        .withSubject(account.getEmail())
                         .withExpiresAt(new Date(System.currentTimeMillis() + 10 * 60 * 1000))
                         .withIssuer(request.getRequestURL().toString())
-                        .withClaim("roles", user.getRoles().stream().map(Role::getName).collect(Collectors.toList()))
+                        .withClaim("roles", account.getRoles().stream().map(Role::getName).collect(Collectors.toList()))
                         .sign(algorithm);
                 Map<String, String> tokens = new HashMap<>();
                 tokens.put("acces_token", access_token);
