@@ -3,13 +3,13 @@ package com.kbien.sportvenuenserver.entity;
 import lombok.AllArgsConstructor;
 import lombok.Data;
 import lombok.NoArgsConstructor;
+import org.hibernate.annotations.LazyCollection;
+import org.hibernate.annotations.LazyCollectionOption;
 
 import javax.persistence.*;
 import java.util.ArrayList;
 import java.util.Collection;
-import java.util.Objects;
 
-import static javax.persistence.FetchType.EAGER;
 import static javax.persistence.GenerationType.AUTO;
 
 @Entity
@@ -28,19 +28,11 @@ public class Account {
     private String surname;
     private String phoneNumber;
 
-    @ManyToMany(fetch = EAGER)
+    @ManyToMany
+    @LazyCollection(LazyCollectionOption.FALSE)
     private Collection<Role> roles = new ArrayList<>();
 
-    @Override
-    public boolean equals(Object o) {
-        if (this == o) return true;
-        if (o == null || getClass() != o.getClass()) return false;
-        Account account = (Account) o;
-        return id == account.id && Objects.equals(email, account.email) && Objects.equals(password, account.password);
-    }
-
-    @Override
-    public int hashCode() {
-        return Objects.hash(id, email, password);
-    }
+    @OneToMany
+    @LazyCollection(LazyCollectionOption.FALSE)
+    private Collection<Venue> venues = new ArrayList<>();
 }
