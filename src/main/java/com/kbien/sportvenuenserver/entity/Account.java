@@ -35,4 +35,8 @@ public class Account {
     @OneToMany
     @LazyCollection(LazyCollectionOption.FALSE)
     private Collection<Venue> venues = new ArrayList<>();
+
+    @OneToMany
+    @LazyCollection(LazyCollectionOption.FALSE)
+    private Collection<Venue> favourites = new ArrayList<>();
 }

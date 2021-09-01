@@ -40,6 +40,16 @@ public class VenueController {
     public ResponseEntity<Venue> updateVenue(@RequestBody Venue venue) {
         return ResponseEntity.accepted().body(venueService.updateVenue(venue));
     }
+
+    @PostMapping(path = "favourites/{userId}/{venueId}")
+    public void addToFavourites(@PathVariable("userId") Long userId, @PathVariable("venueId") Long venueId) {
+        venueService.addToFavourites(userId, venueId);
+    }
+
+    @PutMapping(path = "favourites/{userId}/{venueId}")
+    public void removeFromFavourites(@PathVariable("userId") Long userId, @PathVariable("venueId") Long venueId) {
+        venueService.removeFromFavourites(userId, venueId);
+    }
 }
 
 @Data

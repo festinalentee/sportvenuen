@@ -43,4 +43,20 @@ public class VenueServiceImpl implements VenueService {
         log.info("Updating venue {}", venue.getVenueName());
         return venueRepository.save(venue);
     }
+
+    @Override
+    public void addToFavourites(Long userId, Long venueId) {
+        log.info("Adding venue {} to favourites user {}", venueId, userId);
+        Venue venue = venueRepository.findVenueById(venueId);
+        Account account = userRepository.findUserById(userId);
+        account.getFavourites().add(venue);
+    }
+
+    @Override
+    public void removeFromFavourites(Long userId, Long venueId) {
+        log.info("Removing venue {} from favourites user {}", venueId, userId);
+        Venue venue = venueRepository.findVenueById(venueId);
+        Account account = userRepository.findUserById(userId);
+        account.getFavourites().remove(venue);
+    }
 }

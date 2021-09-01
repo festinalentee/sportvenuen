@@ -10,4 +10,8 @@ public interface VenueService {
     Venue getVenue(Long id);
 
     Venue updateVenue(Venue venue);
+
+    void addToFavourites(Long userId, Long venueId);
+
+    void removeFromFavourites(Long userId, Long venueId);
 }
