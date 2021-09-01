@@ -11,6 +11,7 @@ import org.springframework.web.bind.annotation.*;
 import org.springframework.web.servlet.support.ServletUriComponentsBuilder;
 
 import java.net.URI;
+import java.util.List;
 
 @RestController
 @RequestMapping(path = "/api")
@@ -49,6 +50,11 @@ public class VenueController {
     @PutMapping(path = "favourites/{userId}/{venueId}")
     public void removeFromFavourites(@PathVariable("userId") Long userId, @PathVariable("venueId") Long venueId) {
         venueService.removeFromFavourites(userId, venueId);
+    }
+
+    @GetMapping("/venue/search")
+    public ResponseEntity<List<Venue>> searchVenues(@RequestParam String venueType, @RequestParam String city) {
+        return ResponseEntity.ok(venueService.searchVenues(venueType, city));
     }
 }
 

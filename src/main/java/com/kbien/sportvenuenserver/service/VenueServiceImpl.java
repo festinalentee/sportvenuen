@@ -9,6 +9,7 @@ import lombok.extern.slf4j.Slf4j;
 import org.springframework.stereotype.Service;
 
 import javax.transaction.Transactional;
+import java.util.List;
 
 @Service
 @RequiredArgsConstructor
@@ -58,5 +59,10 @@ public class VenueServiceImpl implements VenueService {
         Venue venue = venueRepository.findVenueById(venueId);
         Account account = userRepository.findUserById(userId);
         account.getFavourites().remove(venue);
+    }
+
+    @Override
+    public List<Venue> searchVenues(String venueType, String city) {
+        return venueRepository.findVenuesByVenueTypeContainingAndCityContaining(venueType, city);
     }
 }
