@@ -37,4 +37,10 @@ public class VenueServiceImpl implements VenueService {
         log.info("Fetching venue {}", id);
         return venueRepository.findVenueById(id);
     }
+
+    @Override
+    public Venue updateVenue(Venue venue) {
+        log.info("Updating venue {}", venue.getVenueName());
+        return venueRepository.save(venue);
+    }
 }

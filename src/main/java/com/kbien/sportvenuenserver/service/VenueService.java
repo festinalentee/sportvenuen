@@ -1,6 +1,5 @@
 package com.kbien.sportvenuenserver.service;
 
-import com.kbien.sportvenuenserver.entity.Account;
 import com.kbien.sportvenuenserver.entity.Venue;
 
 public interface VenueService {
@@ -9,4 +8,6 @@ public interface VenueService {
     void addVenueToUser(Long userId, Long venueId);
 
     Venue getVenue(Long id);
+
+    Venue updateVenue(Venue venue);
 }

@@ -7,7 +7,6 @@ import com.kbien.sportvenuenserver.service.VenueService;
 import lombok.Data;
 import lombok.RequiredArgsConstructor;
 import org.springframework.http.ResponseEntity;
-import org.springframework.security.core.context.SecurityContextHolder;
 import org.springframework.web.bind.annotation.*;
 import org.springframework.web.servlet.support.ServletUriComponentsBuilder;
 
@@ -35,6 +34,11 @@ public class VenueController {
     @GetMapping("/venue/{id}")
     public ResponseEntity<Venue> getVenue(@PathVariable("id") Long id) {
         return ResponseEntity.ok(venueService.getVenue(id));
+    }
+
+    @PutMapping("/venue")
+    public ResponseEntity<Venue> updateVenue(@RequestBody Venue venue) {
+        return ResponseEntity.accepted().body(venueService.updateVenue(venue));
     }
 }
 
