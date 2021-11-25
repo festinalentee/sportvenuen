@@ -3,11 +3,13 @@ package com.kbien.sportvenuenserver.entity;
 import lombok.AllArgsConstructor;
 import lombok.Data;
 import lombok.NoArgsConstructor;
+import org.hibernate.annotations.LazyCollection;
+import org.hibernate.annotations.LazyCollectionOption;
 
-import javax.persistence.Column;
-import javax.persistence.Entity;
-import javax.persistence.GeneratedValue;
-import javax.persistence.Id;
+import javax.persistence.*;
+
+import java.util.ArrayList;
+import java.util.Collection;
 
 import static javax.persistence.GenerationType.AUTO;
 
@@ -28,4 +30,8 @@ public class Venue {
     String country;
     @Column(columnDefinition = "text")
     String description;
+
+    @OneToMany
+    @LazyCollection(LazyCollectionOption.FALSE)
+    private Collection<OpeningDetails> openingDetails = new ArrayList<>();
 }
