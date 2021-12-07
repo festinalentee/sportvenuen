@@ -18,7 +18,7 @@ public class CsvReader {
                 .withSeparator(';')
                 .build();
 
-        //System.out.println(csvToBean.parse());
         return csvToBean.parse();
     }
 }
+
