@@ -5,7 +5,6 @@ import com.kbien.sportvenuenserver.entity.OpeningDetails;
 import com.kbien.sportvenuenserver.entity.Venue;
 import com.kbien.sportvenuenserver.service.OpeningDetailsService;
 import com.kbien.sportvenuenserver.service.VenueService;
-import lombok.Data;
 import lombok.RequiredArgsConstructor;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
@@ -30,5 +29,10 @@ public class OpeningDetailsController {
         venue.setOpeningDetails(openingDetails);
         URI uri = URI.create(ServletUriComponentsBuilder.fromCurrentContextPath().path("/api/venue/save").toUriString());
         return ResponseEntity.created(uri).body(venueService.saveVenue(venue));
+    }
+
+    @GetMapping("/opening-details/{venueId}")
+    public ResponseEntity<OpeningDetails> getOpeningDetails(@PathVariable("venueId") Long venueId) {
+        return ResponseEntity.ok(openingDetailsService.getOpeningDetails(venueId));
     }
 }
