@@ -1,6 +1,7 @@
 package com.kbien.sportvenuenserver.service;
 
 import com.kbien.sportvenuenserver.entity.Account;
+import com.kbien.sportvenuenserver.entity.OpeningHours;
 import com.kbien.sportvenuenserver.entity.Venue;
 import com.kbien.sportvenuenserver.repository.UserRepository;
 import com.kbien.sportvenuenserver.repository.VenueRepository;
@@ -22,6 +23,9 @@ public class VenueServiceImpl implements VenueService {
     @Override
     public Venue saveVenue(Venue venue) {
         log.info("Saving new venue {} to the database", venue.getVenueName());
+        for (OpeningHours openingHours : venue.getOpeningHours()) {
+            openingHours.setVenue(venue);
+        }
         return venueRepository.save(venue);
     }
 
