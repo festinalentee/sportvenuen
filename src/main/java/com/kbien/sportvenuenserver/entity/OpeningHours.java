@@ -18,9 +18,9 @@ public class OpeningHours {
     private Long id;
     @Enumerated(EnumType.STRING)
     private DayOfWeek dayOfWeek;
-    private String openFrom;
-    private String openTo;
-    private String price;
+    private Integer openFrom;
+    private Integer openTo;
+    private Double price;
 
     @ManyToOne
     @JoinColumn(name = "venue_id")
