@@ -30,8 +30,17 @@ public class Venue {
     @Column(columnDefinition = "text")
     String description;
 
+    @ManyToOne
+    @JoinColumn(name = "account_id")
+    private Account account;
+
     @OneToMany(mappedBy = "venue", cascade = CascadeType.ALL, orphanRemoval = true)
     @LazyCollection(LazyCollectionOption.FALSE)
     @JsonManagedReference
     private List<OpeningHours> openingHours;
+
+    @OneToMany(mappedBy="venue", cascade = CascadeType.ALL, orphanRemoval = true)
+    @LazyCollection(LazyCollectionOption.FALSE)
+    @JsonManagedReference
+    private List<Booking> bookings;
 }

@@ -1,12 +1,14 @@
 package com.kbien.sportvenuenserver.controller;
 
+import com.kbien.sportvenuenserver.dto.BookingDto;
 import com.kbien.sportvenuenserver.entity.Account;
+import com.kbien.sportvenuenserver.entity.Booking;
 import com.kbien.sportvenuenserver.entity.Venue;
 import com.kbien.sportvenuenserver.service.UserService;
 import com.kbien.sportvenuenserver.service.VenueService;
-import lombok.Data;
 import lombok.RequiredArgsConstructor;
 import org.springframework.http.ResponseEntity;
+import org.springframework.security.core.context.SecurityContextHolder;
 import org.springframework.web.bind.annotation.*;
 import org.springframework.web.servlet.support.ServletUriComponentsBuilder;
 
@@ -22,14 +24,11 @@ public class VenueController {
 
     @PostMapping(path = "/venue")
     public ResponseEntity<Venue> saveVenue(@RequestBody Venue venue) {
+        String email = (String) SecurityContextHolder.getContext().getAuthentication().getPrincipal();
+        Account account = userService.getUser(email);
+        Venue savedVenue = venueService.saveVenue(venue, account);
         URI uri = URI.create(ServletUriComponentsBuilder.fromCurrentContextPath().path("/api/venue/save").toUriString());
-        return ResponseEntity.created(uri).body(venueService.saveVenue(venue));
-    }
-
-    @PostMapping("/venue/add-to-user")
-    public ResponseEntity<Account> addVenueToUser(@RequestBody VenueToUserForm form) {
-        venueService.addVenueToUser(form.getUserId(), form.getVenueId());
-        return ResponseEntity.ok().body(userService.getUserById(form.getUserId()));
+        return ResponseEntity.created(uri).body(savedVenue);
     }
 
     @GetMapping("/venue/{id}")
@@ -40,6 +39,15 @@ public class VenueController {
     @PutMapping("/venue")
     public ResponseEntity<Venue> updateVenue(@RequestBody Venue venue) {
         return ResponseEntity.accepted().body(venueService.updateVenue(venue));
+    }
+
+    @PostMapping(path = "/venue/booking")
+    public ResponseEntity<Booking> bookVenue(@RequestBody BookingDto bookingDto) {
+        String email = (String) SecurityContextHolder.getContext().getAuthentication().getPrincipal();
+        Account account = userService.getUser(email);
+        Booking savedBooking = venueService.bookVenue(bookingDto, account);
+        URI uri = URI.create(ServletUriComponentsBuilder.fromCurrentContextPath().path("/api/venue/booking").toUriString());
+        return ResponseEntity.created(uri).body(savedBooking);
     }
 
     @PostMapping(path = "favourites/{userId}/{venueId}")
@@ -56,10 +64,4 @@ public class VenueController {
     public ResponseEntity<List<Venue>> searchVenues(@RequestParam String venueType, @RequestParam String city) {
         return ResponseEntity.ok(venueService.searchVenues(venueType, city));
     }
-}
-
-@Data
-class VenueToUserForm {
-    private Long userId;
-    private Long venueId;
 }

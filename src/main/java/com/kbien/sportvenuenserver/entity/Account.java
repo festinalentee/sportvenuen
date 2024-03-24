@@ -1,5 +1,6 @@
 package com.kbien.sportvenuenserver.entity;
 
+import com.fasterxml.jackson.annotation.JsonManagedReference;
 import lombok.AllArgsConstructor;
 import lombok.Data;
 import lombok.NoArgsConstructor;
@@ -9,6 +10,7 @@ import org.hibernate.annotations.LazyCollectionOption;
 import javax.persistence.*;
 import java.util.ArrayList;
 import java.util.Collection;
+import java.util.List;
 
 import static javax.persistence.GenerationType.AUTO;
 
@@ -39,4 +41,9 @@ public class Account {
     @OneToMany
     @LazyCollection(LazyCollectionOption.FALSE)
     private Collection<Venue> favourites = new ArrayList<>();
+
+    @OneToMany(mappedBy = "account", cascade = CascadeType.ALL, orphanRemoval = true)
+    @LazyCollection(LazyCollectionOption.FALSE)
+    @JsonManagedReference
+    private List<Booking> bookings;
 }
